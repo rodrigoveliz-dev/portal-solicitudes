@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solicitud de Insumos</title>
+  <meta name="description" content="Formulario institucional para solicitar insumos. Compatible con Netlify Forms y validación básica, con confirmación previa al envío." />
+  <style>
+    :root{--ink:#0f172a;--muted:#6b7280;--bg:#f9fdfc;--card:#ffffff;--line:#e5e7eb;--brand:#0d9488;--overlay:rgba(2,6,23,.6)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    header{padding:18px 14px;border-bottom:1px solid var(--line);background:#fff}
+    .wrap{max-width:900px;margin:0 auto;padding:22px}
+    form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:14px}
+    fieldset{border:1px dashed var(--line);border-radius:12px;padding:14px}
+    legend{font-weight:700;color:var(--brand)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:800px){.row{grid-template-columns:1fr}}
+    label{font-weight:600;display:block;margin-top:6px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
+    small{color:var(--muted)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    button{justify-self:start;background:var(--brand);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
+    button.secondary{background:#0b3f3a}
+
+    dialog{border:none;border-radius:16px;padding:0;max-width:720px;width:92%}
+    dialog::backdrop{background:var(--overlay)}
+    .modal-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .modal-head h2{margin:0;font-size:20px}
+    .modal-body{padding:16px}
+    .summary{width:100%;border-collapse:collapse}
+    .summary th,.summary td{border-bottom:1px solid var(--line);text-align:left;padding:8px 6px;vertical-align:top}
+    .summary th{width:36%}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;padding:14px 16px;border-top:1px solid var(--line)}
+    .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#0b3f3a}
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <a href="./index.html" style="text-decoration:none;color:var(--brand);border:1px solid var(--line);padding:8px 12px;border-radius:10px">← Volver al portal</a>
+    <h1>Solicitud de Insumos</h1>
+    <p class="muted">Complete este formulario para solicitar insumos requeridos. Adjunte respaldos cuando corresponda.</p>
+  </header>
+
+  <main class="wrap">
+    <form id="formInsumos" name="solicitud-insumos" method="POST" data-netlify="true" action="/success" netlify-honeypot="bot-field" aria-describedby="ayuda">
+      <p style="display:none"><label>No completar: <input name="bot-field"></label></p>
+      <input type="hidden" name="form-name" value="solicitud-insumos" />
+      <input type="hidden" name="ts" id="tsInsumos" />
+
+      <fieldset>
+        <legend>Datos del solicitante</legend>
+        <div class="row">
+          <div>
+            <label for="nombre_i">Nombre completo *</label>
+            <input id="nombre_i" name="nombre" required />
+          </div>
+          <div>
+            <label for="correo_i">Correo institucional *</label>
+            <input id="correo_i" name="correo" type="email" required />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="unidad_i">Unidad / Centro *</label>
+            <input id="unidad_i" name="unidad" required />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Detalle del insumo</legend>
+        <div class="row">
+          <div>
+            <label for="categoria">Categoría *</label>
+            <select id="categoria" name="categoria" required>
+              <option value="">Seleccione…</option>
+              <option>Clínicos</option>
+              <option>Administrativos</option>
+              <option>Aseo</option>
+              <option>Seguridad</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div>
+            <label for="cantidad">Cantidad *</label>
+            <input id="cantidad" name="cantidad" type="number" min="1" max="999" required />
+          </div>
+        </div>
+        <label for="descripcion">Descripción / Especificaciones *</label>
+        <textarea id="descripcion" name="descripcion" rows="3" required placeholder="Detalle del insumo solicitado"></textarea>
+        <div class="row">
+          <div>
+            <label for="fecha_req">Fecha requerida</label>
+            <input id="fecha_req" name="fecha_requerida" type="date" />
+          </div>
+          <div>
+            <label for="urgencia">Urgencia</label>
+            <select id="urgencia" name="urgencia">
+              <option>Normal</option>
+              <option>Alta</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="adj">Adjuntar respaldo (PDF/JPG/PNG)</label>
+            <input id="adj" name="adjunto" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+          </div>
+        </div>
+        <label for="justificacion">Justificación *</label>
+        <textarea id="justificacion" name="justificacion" rows="3" required placeholder="Explique la necesidad o uso de los insumos"></textarea>
+      </fieldset>
+
+      <label><input type="checkbox" name="declaracion" required /> Declaro que la información es veraz y que la solicitud se enmarca en las políticas internas.</label>
+      <small id="ayuda" class="muted">Los datos serán usados solo para la gestión interna de insumos.</small>
+
+      <div class="actions">
+        <button id="btnPreview" type="submit">Enviar Solicitud</button>
+        <button class="secondary" type="reset">Limpiar</button>
+      </div>
+    </form>
+  </main>
+
+  <dialog id="confirmModal" aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="confirmTitle">Confirmar envío</h2>
+        <button class="btn secondary" id="closeModal" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmDesc">Revise el resumen y confirme que los datos son correctos.</p>
+        <table class="summary" id="summaryTable"></table>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" id="cancelBtn" type="button">Volver y editar</button>
+        <button class="btn" id="confirmBtn" type="button">Confirmar y enviar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    document.getElementById('tsInsumos').value = new Date().toISOString();
+
+    const fechaReq = document.getElementById('fecha_req');
+    if(fechaReq){
+      const hoy = new Date();
+      const iso = new Date(hoy.getTime() + 24*60*60*1000).toISOString().slice(0,10);
+      fechaReq.min = iso;
+    }
+
+    const form = document.getElementById('formInsumos');
+    const modal = document.getElementById('confirmModal');
+    const summaryTable = document.getElementById('summaryTable');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const closeModal = document.getElementById('closeModal');
+    let readyToSend = false;
+
+    function val(n){ return (form.elements[n] && form.elements[n].value) ? form.elements[n].value : ''; }
+    function fileName(){ const f = form.elements['adjunto']; return (f && f.files && f.files[0]) ? f.files[0].name : ''; }
+
+    function buildSummary(){
+      const rows = [
+        ['Nombre', val('nombre')],
+        ['Correo', val('correo')],
+        ['Unidad / Centro', val('unidad')],
+        ['Categoría', val('categoria')],
+        ['Cantidad', val('cantidad')],
+        ['Descripción / Especificaciones', val('descripcion')],
+        ['Fecha requerida', val('fecha_requerida') || '—'],
+        ['Urgencia', val('urgencia') || 'Normal'],
+        ['Justificación', val('justificacion')],
+        ['Adjunto', fileName() || '—']
+      ];
+      summaryTable.innerHTML = rows.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
+    }
+
+    form.addEventListener('submit', (e)=>{
+      if(readyToSend){ return; }
+      if(!form.checkValidity()){ return; }
+      e.preventDefault();
+      buildSummary();
+      try{ modal.showModal(); } catch { modal.setAttribute('open',''); }
+    });
+
+    function close(){ try{ modal.close(); } catch{ modal.removeAttribute('open'); } }
+    cancelBtn.addEventListener('click', close);
+    closeModal.addEventListener('click', close);
+
+    confirmBtn.addEventListener('click', ()=>{
+      readyToSend = true;
+      form.requestSubmit();
+    });
+  </script>
+</body>
+</html>

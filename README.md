@@ -1,18 +1,17 @@
 # Portal de Solicitudes — Netlify
 
-Este paquete incluye el portal y formularios listos para publicar en Netlify.
+Este paquete incluye:
+- `index.html`: Portal con acceso a **Solicitud de Vehículos** y **Solicitud de Insumos**.
+- `solicitud-vehiculos.html`: Formulario con validaciones, previsualización (modal) y Netlify Forms.
+- `solicitud-insumos.html`: Formulario con previsualización (modal) y Netlify Forms.
+- `success.html`: Página de confirmación.
+- `netlify.toml`: Redirección `/success` → `success.html` y cabeceras de seguridad.
 
-## Archivos
-- `index.html` — home con botones a cada formulario
-- `solicitud-vehiculos.html` — formulario con validaciones, modal de confirmación y Netlify Forms
-- `solicitud-activos.html` — formulario con Netlify Forms
-- `success.html` — página de gracias (redirect desde `/success`)
-- `netlify.toml` — configuración de redirects y headers
-
-## Publicación rápida (Drag & Drop)
-1. Entra a Netlify → Add new site → Deploy with drag and drop.
-2. Sube **todo el contenido** de esta carpeta (no la carpeta padre).
-3. En el primer envío, Netlify detectará automáticamente los formularios. Podrás verlos en: *Site → Forms*.
+## Publicación
+1. Crea un sitio en Netlify → *Add new site* → *Deploy with drag and drop*.
+2. Arrastra **el contenido** de esta carpeta (no la carpeta en sí).
+3. En *Site settings → Forms* verás los formularios **solicitud-vehiculo** y **solicitud-insumos** al recibir el primer envío.
 
 ## Notificaciones
-Desde el panel de Netlify Forms puedes activar notificaciones por correo y exportar CSV.
+- Activa notificaciones por correo en *Site settings → Forms → Notifications*.
+- Puedes integrar con Google Sheets / Zapier si necesitas consolidación adicional.

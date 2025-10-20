@@ -29,12 +29,12 @@
     @media (max-width:840px){.row{grid-template-columns:1fr}}
     input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
     input[type="file"]{padding:8px}
-    small{color:#64748b}
+    small{color:var(--muted)}
     .actions{display:flex;gap:12px;flex-wrap:wrap}
     button{background:var(--brand);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
     button.secondary{background:#0b3f3a}
     button:hover{filter:brightness(.97)}
-    .helper{font-size:14px;color:#64748b}
+    .helper{font-size:14px;color:var(--muted)}
 
     dialog{border:none;border-radius:16px;padding:0;max-width:720px;width:92%}
     dialog::backdrop{background:var(--overlay)}
@@ -74,15 +74,15 @@
             <input id="nombre" name="nombre" autocomplete="name" required>
           </div>
           <div>
-            <label for="rut">RUT *</label>
-            <input id="rut" name="rut" placeholder="12.345.678-9" required>
-            <small id="rutHelp" class="helper">Use formato con guión. Se valida dígito verificador.</small>
+            <label for="correo">Correo institucional *</label>
+            <input id="correo" name="correo" type="email" required placeholder="nombre@cormusjm.cl">
           </div>
         </div>
         <div class="row">
           <div>
-            <label for="correo">Correo institucional *</label>
-            <input id="correo" name="correo" type="email" required placeholder="nombre@cormusjm.cl">
+            <label for="rut">RUT *</label>
+            <input id="rut" name="rut" placeholder="12.345.678-9" required>
+            <small id="rutHelp" class="helper">Use formato con guión. Se valida dígito verificador.</small>
           </div>
           <div>
             <label for="telefono">Teléfono</label>
@@ -192,27 +192,23 @@
 
   <script>
     document.getElementById('ts').value = new Date().toISOString();
-    const salida = document.getElementById('salida');
-    const retorno = document.getElementById('retorno');
-    const min = new Date(Date.now() + 30*60*1000).toISOString().slice(0,16);
-    salida.min = min; retorno.min = min;
+    const salida=document.getElementById('salida');
+    const retorno=document.getElementById('retorno');
+    const min = new Date(Date.now()+30*60*1000).toISOString().slice(0,16);
+    salida.min=min; retorno.min=min;
     function checkFechas(){
       if(salida.value && retorno.value && retorno.value <= salida.value){
         retorno.setCustomValidity('El retorno debe ser posterior a la salida');
-      } else {
-        retorno.setCustomValidity('');
-      }
+      } else { retorno.setCustomValidity(''); }
     }
-    salida.addEventListener('change', checkFechas);
-    retorno.addEventListener('change', checkFechas);
-
-    const prioridad = document.getElementById('prioridad');
-    prioridad.addEventListener('change', () => {
-      if(prioridad.value === 'Urgente'){
+    salida.addEventListener('change',checkFechas);
+    retorno.addEventListener('change',checkFechas);
+    const prioridad=document.getElementById('prioridad');
+    prioridad.addEventListener('change',()=>{
+      if(prioridad.value==='Urgente'){
         alert('Recuerde justificar la urgencia en Observaciones y notificar a su jefatura.');
       }
     });
-
     const form = document.getElementById('formVehiculo');
     const modal = document.getElementById('confirmModal');
     const summaryTable = document.getElementById('summaryTable');
@@ -221,19 +217,14 @@
     const closeModal = document.getElementById('closeModal');
     let readyToSend = false;
 
-    function val(n){
-      return (form.elements[n] && form.elements[n].value) ? form.elements[n].value : '';
-    }
-    function fileName(){
-      const f = form.elements['adjunto'];
-      return (f && f.files && f.files[0]) ? f.files[0].name : '';
-    }
+    function val(n){return (form.elements[n] && form.elements[n].value) ? form.elements[n].value : ''}
+    function fileName(){const f=form.elements['adjunto']; return (f && f.files && f.files[0]) ? f.files[0].name : ''}
 
     function buildSummary(){
       const rows = [
         ['Nombre', val('nombre')],
-        ['RUT', val('rut')],
         ['Correo', val('correo')],
+        ['RUT', val('rut')],
         ['Teléfono', val('telefono')],
         ['Salida', val('fecha_salida')],
         ['Retorno', val('fecha_retorno')],
@@ -247,26 +238,24 @@
         ['Observaciones', val('observaciones') || '—'],
         ['Adjunto', fileName() || '—']
       ];
-      summaryTable.innerHTML = rows.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
+      summaryTable.innerHTML = rows.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
     }
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', (e)=>{
       if(readyToSend){ return; }
       if(!form.checkValidity()){
         return;
       }
       e.preventDefault();
       buildSummary();
-      try { modal.showModal(); } catch { modal.setAttribute('open',''); }
+      try{ modal.showModal(); } catch { modal.setAttribute('open',''); }
     });
 
-    function close(){
-      try { modal.close(); } catch { modal.removeAttribute('open'); }
-    }
+    function close(){ try{ modal.close(); } catch{ modal.removeAttribute('open'); } }
     cancelBtn.addEventListener('click', close);
     closeModal.addEventListener('click', close);
 
-    confirmBtn.addEventListener('click', () => {
+    confirmBtn.addEventListener('click', ()=>{
       readyToSend = true;
       form.requestSubmit();
     });
