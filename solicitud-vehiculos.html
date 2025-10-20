@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solicitud de Vehículos — Departamento de Salud</title>
+  <meta name="description" content="Formulario institucional para solicitar vehículos. Compatible con Netlify Forms y validaciones básicas." />
+  <style>
+    :root{
+      --ink:#0f172a; --muted:#64748b; --line:#e5e7eb; --bg:#f4f7f6;
+      --card:#ffffff; --brand:#00796b; --brand2:#26a69a; --danger:#b91c1c;
+      --overlay: rgba(2,6,23,.6);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    header{background:#fff;border-bottom:1px solid var(--line)}
+    .wrap{width:min(980px,92%);margin-inline:auto}
+    .bar{display:flex;gap:12px;align-items:center;padding:14px 0}
+    .back{color:var(--brand);text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:10px}
+    h1{font-size:clamp(22px,3.6vw,32px);margin:0}
+    main{padding:18px 0 28px}
+
+    .notice{background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:12px;margin:10px 0}
+    form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:16px}
+    fieldset{border:1px dashed var(--line);border-radius:12px;padding:14px}
+    legend{font-weight:700;color:#075e54}
+    label{font-weight:600;display:block;margin-top:8px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:840px){.row{grid-template-columns:1fr}}
+    input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
+    input[type="file"]{padding:8px}
+    small{color:#64748b}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    button{background:var(--brand);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
+    button.secondary{background:#0b3f3a}
+    button:hover{filter:brightness(.97)}
+    .helper{font-size:14px;color:#64748b}
+
+    dialog{border:none;border-radius:16px;padding:0;max-width:720px;width:92%}
+    dialog::backdrop{background:var(--overlay)}
+    .modal-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .modal-head h2{margin:0;font-size:20px}
+    .modal-body{padding:16px}
+    .summary{width:100%;border-collapse:collapse}
+    .summary th,.summary td{border-bottom:1px solid var(--line);text-align:left;padding:8px 6px;vertical-align:top}
+    .summary th{width:36%}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;padding:14px 16px;border-top:1px solid var(--line)}
+    .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#0b3f3a}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="back" href="./index.html">← Volver al portal</a>
+      <h1>Solicitud de Vehículos</h1>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="notice">Complete el formulario para gestionar su requerimiento. Recibirá confirmación por correo cuando sea revisado.</p>
+
+    <form id="formVehiculo" name="solicitud-vehiculo" method="POST" action="/success" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" aria-describedby="ayuda">
+      <p style="display:none"><label>Si eres humano no completes esto: <input name="bot-field"></label></p>
+      <input type="hidden" name="form-name" value="solicitud-vehiculo">
+      <input type="hidden" name="timestamp" id="ts">
+
+      <fieldset>
+        <legend>Datos del solicitante</legend>
+        <div class="row">
+          <div>
+            <label for="nombre">Nombre completo *</label>
+            <input id="nombre" name="nombre" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="rut">RUT *</label>
+            <input id="rut" name="rut" placeholder="12.345.678-9" required>
+            <small id="rutHelp" class="helper">Use formato con guión. Se valida dígito verificador.</small>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="correo">Correo institucional *</label>
+            <input id="correo" name="correo" type="email" required placeholder="nombre@cormusjm.cl">
+          </div>
+          <div>
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" name="telefono" inputmode="tel" placeholder="+56 9 1234 5678">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Itinerario</legend>
+        <div class="row">
+          <div>
+            <label for="salida">Salida *</label>
+            <input id="salida" name="fecha_salida" type="datetime-local" required>
+          </div>
+          <div>
+            <label for="retorno">Retorno *</label>
+            <input id="retorno" name="fecha_retorno" type="datetime-local" required>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="origen">Origen *</label>
+            <input id="origen" name="origen" required placeholder="Ej: CESFAM San José de Maipo">
+          </div>
+          <div>
+            <label for="destino">Destino(s) *</label>
+            <input id="destino" name="destino" required placeholder="Ej: Hospital Sótero del Río; Oficina SSMSO">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="pasajeros">N° pasajeros *</label>
+            <input id="pasajeros" name="pasajeros" type="number" min="1" max="12" required>
+          </div>
+          <div>
+            <label for="motivo">Motivo del traslado *</label>
+            <input id="motivo" name="motivo" required>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Requisitos y preferencias</legend>
+        <div class="row">
+          <div>
+            <label for="tipo">Tipo de vehículo</label>
+            <select id="tipo" name="tipo">
+              <option value="">Sin preferencia</option>
+              <option>Furgón</option>
+              <option>Camioneta</option>
+              <option>Ambulancia</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div>
+            <label for="chofer">¿Requiere chofer designado?</label>
+            <select id="chofer" name="chofer">
+              <option>No</option>
+              <option>Sí</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad" name="prioridad">
+              <option>Programada</option>
+              <option>Urgente</option>
+            </select>
+          </div>
+          <div>
+            <label for="adjunto">Adjuntar respaldo (PDF/JPG/PNG)</label>
+            <input id="adjunto" name="adjunto" type="file" accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+        </div>
+        <label for="obs">Observaciones</label>
+        <textarea id="obs" name="observaciones" rows="3" placeholder="Detalles relevantes: accesibilidad, equipamiento, etc."></textarea>
+      </fieldset>
+
+      <label><input type="checkbox" name="declaracion" required> Declaro que la información es veraz y autorizo el tratamiento de datos para gestionar esta solicitud.</label>
+      <small id="ayuda" class="helper">Los datos serán usados solo para la coordinación de transporte institucional.</small>
+
+      <div class="actions">
+        <button id="btnPreview" type="submit">Enviar solicitud</button>
+        <button class="secondary" type="reset">Limpiar</button>
+      </div>
+    </form>
+  </main>
+
+  <dialog id="confirmModal" aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="confirmTitle">Confirmar envío</h2>
+        <button class="btn secondary" formnovalidate id="closeModal" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmDesc">Revise el resumen y confirme que los datos son correctos.</p>
+        <table class="summary" id="summaryTable"></table>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" id="cancelBtn" type="button">Volver y editar</button>
+        <button class="btn" id="confirmBtn" type="button">Confirmar y enviar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    document.getElementById('ts').value = new Date().toISOString();
+    const salida = document.getElementById('salida');
+    const retorno = document.getElementById('retorno');
+    const min = new Date(Date.now() + 30*60*1000).toISOString().slice(0,16);
+    salida.min = min; retorno.min = min;
+    function checkFechas(){
+      if(salida.value && retorno.value && retorno.value <= salida.value){
+        retorno.setCustomValidity('El retorno debe ser posterior a la salida');
+      } else {
+        retorno.setCustomValidity('');
+      }
+    }
+    salida.addEventListener('change', checkFechas);
+    retorno.addEventListener('change', checkFechas);
+
+    const prioridad = document.getElementById('prioridad');
+    prioridad.addEventListener('change', () => {
+      if(prioridad.value === 'Urgente'){
+        alert('Recuerde justificar la urgencia en Observaciones y notificar a su jefatura.');
+      }
+    });
+
+    const form = document.getElementById('formVehiculo');
+    const modal = document.getElementById('confirmModal');
+    const summaryTable = document.getElementById('summaryTable');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const closeModal = document.getElementById('closeModal');
+    let readyToSend = false;
+
+    function val(n){
+      return (form.elements[n] && form.elements[n].value) ? form.elements[n].value : '';
+    }
+    function fileName(){
+      const f = form.elements['adjunto'];
+      return (f && f.files && f.files[0]) ? f.files[0].name : '';
+    }
+
+    function buildSummary(){
+      const rows = [
+        ['Nombre', val('nombre')],
+        ['RUT', val('rut')],
+        ['Correo', val('correo')],
+        ['Teléfono', val('telefono')],
+        ['Salida', val('fecha_salida')],
+        ['Retorno', val('fecha_retorno')],
+        ['Origen', val('origen')],
+        ['Destino(s)', val('destino')],
+        ['Pasajeros', val('pasajeros')],
+        ['Motivo', val('motivo')],
+        ['Tipo de vehículo', val('tipo') || 'Sin preferencia'],
+        ['Chofer designado', val('chofer') || 'No'],
+        ['Prioridad', val('prioridad')],
+        ['Observaciones', val('observaciones') || '—'],
+        ['Adjunto', fileName() || '—']
+      ];
+      summaryTable.innerHTML = rows.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
+    }
+
+    form.addEventListener('submit', (e) => {
+      if(readyToSend){ return; }
+      if(!form.checkValidity()){
+        return;
+      }
+      e.preventDefault();
+      buildSummary();
+      try { modal.showModal(); } catch { modal.setAttribute('open',''); }
+    });
+
+    function close(){
+      try { modal.close(); } catch { modal.removeAttribute('open'); }
+    }
+    cancelBtn.addEventListener('click', close);
+    closeModal.addEventListener('click', close);
+
+    confirmBtn.addEventListener('click', () => {
+      readyToSend = true;
+      form.requestSubmit();
+    });
+  </script>
+</body>
+</html>
